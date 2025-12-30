@@ -205,18 +205,25 @@
         let startY = 0;
         let lastTap = 0;
         let lastScale = 1;
+        let rafId = null;
 
         function updateTransform() {
-            wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            if (rafId) return; // Already scheduled
 
-            // Only update hotspot scale if scale changed (not on every pan)
-            if (scale !== lastScale) {
-                const inverseScale = 1 / scale;
-                hotspots.forEach(hotspot => {
-                    hotspot.style.transform = `scale(${inverseScale})`;
-                });
-                lastScale = scale;
-            }
+            rafId = requestAnimationFrame(() => {
+                wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+                // Only update hotspot scale if scale changed (not on every pan)
+                if (scale !== lastScale) {
+                    const inverseScale = 1 / scale;
+                    hotspots.forEach(hotspot => {
+                        hotspot.style.transform = `scale(${inverseScale})`;
+                    });
+                    lastScale = scale;
+                }
+
+                rafId = null;
+            });
         }
 
         function getDistance(touch1, touch2) {
@@ -226,9 +233,6 @@
         }
 
         wrapper.addEventListener('touchstart', (e) => {
-            // Disable transition during touch interaction
-            wrapper.style.transition = 'none';
-
             // Double tap to reset
             const currentTime = new Date().getTime();
             const tapLength = currentTime - lastTap;
@@ -279,8 +283,6 @@
 
         wrapper.addEventListener('touchend', () => {
             isPanning = false;
-            // Re-enable transition after touch ends
-            wrapper.style.transition = 'transform 0.1s ease-out';
         });
     </script>
 </body>
