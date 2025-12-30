@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="hotspot" data-hotspot="4"
-                    style="top:85%; left:15%; --glow-dur:3.1s; --glow-delay:-0.9s;">
+                    style="top:82%; left:32%; --glow-dur:3.1s; --glow-delay:-0.9s;">
                     <div class="hotspot-number">4</div>
                     <div class="hotspot-tooltip">
                     <h4>Sample Playback</h4>
@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="hotspot" data-hotspot="5"
-                    style="top:85%; left:22%; --glow-dur:2.5s; --glow-delay:-1.8s;">
+                    style="top:85%; left:15%; --glow-dur:2.5s; --glow-delay:-1.8s;">
                     <div class="hotspot-number">5</div>
                     <div class="hotspot-tooltip">
                     <h4>Arpeggiation &amp; Randomization</h4>
@@ -150,5 +150,44 @@
             <p>&copy; 2025 IDIMide. All rights reserved.</p>
         </div>
     </footer>
+
+    <div class="tooltip-backdrop"></div>
+
+    <script>
+        const hotspots = document.querySelectorAll('.hotspot');
+        const backdrop = document.querySelector('.tooltip-backdrop');
+
+        hotspots.forEach(hotspot => {
+            hotspot.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                const isActive = hotspot.classList.contains('active');
+
+                // Close all other hotspots
+                hotspots.forEach(h => h.classList.remove('active'));
+                backdrop.classList.remove('active');
+
+                // Toggle current hotspot
+                if (!isActive) {
+                    hotspot.classList.add('active');
+                    backdrop.classList.add('active');
+                }
+            });
+        });
+
+        // Close on backdrop click
+        backdrop.addEventListener('click', () => {
+            hotspots.forEach(h => h.classList.remove('active'));
+            backdrop.classList.remove('active');
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hotspots.forEach(h => h.classList.remove('active'));
+                backdrop.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
