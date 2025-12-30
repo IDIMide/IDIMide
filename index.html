@@ -18,7 +18,23 @@
             <div class="coming-soon-badge">Coming Soon</div>
             <h1 class="title">IDIMide</h1>
             <p class="subtitle">An Experimental Tracker</p>
-            <div class="track-count">12 Tracks</div>
+            <div class="features-list">
+                <span>12 Monophonic Tracks</span>
+                <span class="separator">•</span>
+                <span>MIDI Out</span>
+                <span class="separator">•</span>
+                <span>Sample Playback</span>
+                <span class="separator">•</span>
+                <span>Realtime FX</span>
+                <span class="separator">•</span>
+                <span>Deep Randomization</span>
+                <span class="separator">•</span>
+                <span>Complex Arpeggiation</span>
+                <span class="separator">•</span>
+                <span>Parameter States</span>
+                <span class="separator">•</span>
+                <span>Modulation & Locks</span>
+            </div>
         </div>
     </header>
 
@@ -26,66 +42,54 @@
         <section class="screenshot-section">
             <div class="container">
                 <div class="screenshot-wrapper">
-                    <img src="screenshot.png" alt="IDIMide Tracker Interface" class="screenshot">
-                </div>
-            </div>
-        </section>
+                    <img src="screenshot.png" alt="IDIMide Tracker Interface" class="screenshot" id="screenshot">
 
-        <section class="features">
-            <div class="container">
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">🎹</div>
-                        <h3>12 Monophonic Tracks</h3>
-                        <p>Each track features 3 FX slots per step for precise sound design and creative sequencing.</p>
+                    <div class="hotspot" data-hotspot="1" style="top: 12%; left: 8%;">
+                        <div class="hotspot-number">1</div>
+                        <div class="hotspot-tooltip">
+                            <h4>Master Track</h4>
+                            <p>Controls pattern length and plays back deterministically. Child track positions can be altered in real time.</p>
+                        </div>
                     </div>
 
-                    <div class="feature-card">
-                        <div class="feature-icon">🔌</div>
-                        <h3>MIDI Out</h3>
-                        <p>Full-fledged MIDI output with clock synchronization for seamless integration with external devices and software.</p>
+                    <div class="hotspot" data-hotspot="2" style="top: 32%; left: 8%;">
+                        <div class="hotspot-number">2</div>
+                        <div class="hotspot-tooltip">
+                            <h4>12 Child Tracks</h4>
+                            <p>Independent monophonic tracks with 3 FX slots per step for creative sequencing.</p>
+                        </div>
                     </div>
 
-                    <div class="feature-card">
-                        <div class="feature-icon">🎵</div>
-                        <h3>Sample Playback</h3>
-                        <p>Advanced sample playback with looping, multiple play modes, start and end controls, and more.</p>
+                    <div class="hotspot" data-hotspot="3" style="top: 15%; left: 75%;">
+                        <div class="hotspot-number">3</div>
+                        <div class="hotspot-tooltip">
+                            <h4>Realtime FX</h4>
+                            <p>Distortion, sample-rate reduction, multimode biquad filter, and EQ per track with 4 modulation slots.</p>
+                        </div>
                     </div>
 
-                    <div class="feature-card">
-                        <div class="feature-icon">⚡</div>
-                        <h3>Realtime FX</h3>
-                        <p>Distortion, sample-rate reduction, multimode biquad filter, and EQ per track with 4 modulation slots.</p>
+                    <div class="hotspot" data-hotspot="4" style="top: 85%; left: 15%;">
+                        <div class="hotspot-number">4</div>
+                        <div class="hotspot-tooltip">
+                            <h4>Sample Playback</h4>
+                            <p>Advanced playback with looping, multiple play modes, start and end controls, and more.</p>
+                        </div>
                     </div>
 
-                    <div class="feature-card">
-                        <div class="feature-icon">🔄</div>
-                        <h3>Independent Track Control</h3>
-                        <p>The master track controls pattern length with deterministic playback. Alter playhead positions for the 12 child tracks in real time with various sequencing FX.</p>
+                    <div class="hotspot" data-hotspot="5" style="top: 85%; left: 50%;">
+                        <div class="hotspot-number">5</div>
+                        <div class="hotspot-tooltip">
+                            <h4>Arpeggiation & Randomization</h4>
+                            <p>Complex arpeggios with probability per step. Deep randomization options for sequencing FX.</p>
+                        </div>
                     </div>
 
-                    <div class="feature-card">
-                        <div class="feature-icon">🎲</div>
-                        <h3>Deep Randomization</h3>
-                        <p>Set probability per note with built-in randomization options for various sequencing FX.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">🎼</div>
-                        <h3>Complex Arpeggiation</h3>
-                        <p>Create arpeggios for each track, each with probability and FX per step for intricate patterns.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">💾</div>
-                        <h3>Parameter States</h3>
-                        <p>Create new states and adjust FX parameters. Switch back to previous states to restore settings and sequence state changes on the fly.</p>
-                    </div>
-
-                    <div class="feature-card feature-card-wide">
-                        <div class="feature-icon">🎚️</div>
-                        <h3>Modulation & Parameter Locks</h3>
-                        <p>All parameters can be modulated and sequenced in real time for ultimate creative control.</p>
+                    <div class="hotspot" data-hotspot="6" style="top: 85%; left: 85%;">
+                        <div class="hotspot-number">6</div>
+                        <div class="hotspot-tooltip">
+                            <h4>Parameter States</h4>
+                            <p>Create and switch between states. Sequence parameter changes on the fly.</p>
+                        </div>
                     </div>
                 </div>
             </div>
