@@ -199,6 +199,12 @@
 
         function updateTransform() {
             wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+            // Apply inverse scale to hotspots to keep them fixed size
+            const inverseScale = 1 / scale;
+            hotspots.forEach(hotspot => {
+                hotspot.style.transform = `scale(${inverseScale})`;
+            });
         }
 
         function getDistance(touch1, touch2) {
