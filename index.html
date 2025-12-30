@@ -179,6 +179,14 @@
             backdrop.classList.remove('active');
         });
 
+        // Close tooltip when clicking outside hotspots
+        wrapper.addEventListener('click', (e) => {
+            if (!e.target.closest('.hotspot')) {
+                hotspots.forEach(h => h.classList.remove('active'));
+                backdrop.classList.remove('active');
+            }
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 hotspots.forEach(h => h.classList.remove('active'));
