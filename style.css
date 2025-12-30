@@ -365,6 +365,13 @@ footer p {
         font-size: 0.75rem;
     }
 
+    .hotspot.active .hotspot-tooltip {
+        position: fixed;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+    }
+
     .hotspot-tooltip {
         min-width: 240px;
         max-width: 280px;
