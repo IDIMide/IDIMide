@@ -212,13 +212,18 @@ body {
     transition: opacity 0.25s ease;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
-    z-index: 100;
+    z-index: 1001;
 }
 
-.hotspot:hover .hotspot-tooltip,
+.hotspot:hover .hotspot-tooltip {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .hotspot.active .hotspot-tooltip {
     opacity: 1;
     pointer-events: auto;
+    position: fixed;
 }
 
 .hotspot-tooltip h4 {
