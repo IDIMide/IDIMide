@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="IDIMide - An experimental tracker with 12 monophonic tracks, realtime FX, and deep sequencing capabilities. Coming soon.">
     <title>IDIMide - An Experimental Tracker</title>
     <link rel="stylesheet" href="style.css">
@@ -156,18 +156,17 @@
     <script>
         const hotspots = document.querySelectorAll('.hotspot');
         const backdrop = document.querySelector('.tooltip-backdrop');
+        const wrapper = document.querySelector('.screenshot-wrapper');
 
+        // Hotspot tooltip handling
         hotspots.forEach(hotspot => {
             hotspot.addEventListener('click', (e) => {
                 e.stopPropagation();
-
                 const isActive = hotspot.classList.contains('active');
 
-                // Close all other hotspots
                 hotspots.forEach(h => h.classList.remove('active'));
                 backdrop.classList.remove('active');
 
-                // Toggle current hotspot
                 if (!isActive) {
                     hotspot.classList.add('active');
                     backdrop.classList.add('active');
@@ -175,18 +174,89 @@
             });
         });
 
-        // Close on backdrop click
         backdrop.addEventListener('click', () => {
             hotspots.forEach(h => h.classList.remove('active'));
             backdrop.classList.remove('active');
         });
 
-        // Close on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 hotspots.forEach(h => h.classList.remove('active'));
                 backdrop.classList.remove('active');
             }
+        });
+
+        // Pan/Zoom functionality for mobile
+        let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        let initialDistance = 0;
+        let initialScale = 1;
+        let isPanning = false;
+        let startX = 0;
+        let startY = 0;
+        let lastTap = 0;
+
+        function updateTransform() {
+            wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        }
+
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        wrapper.addEventListener('touchstart', (e) => {
+            // Double tap to reset
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 300 && tapLength > 0 && e.touches.length === 1) {
+                scale = 1;
+                translateX = 0;
+                translateY = 0;
+                updateTransform();
+                e.preventDefault();
+                return;
+            }
+            lastTap = currentTime;
+
+            if (e.touches.length === 2) {
+                // Pinch zoom
+                initialDistance = getDistance(e.touches[0], e.touches[1]);
+                initialScale = scale;
+            } else if (e.touches.length === 1) {
+                // Pan
+                isPanning = true;
+                startX = e.touches[0].clientX - translateX;
+                startY = e.touches[0].clientY - translateY;
+            }
+        });
+
+        wrapper.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                // Pinch zoom
+                e.preventDefault();
+                const currentDistance = getDistance(e.touches[0], e.touches[1]);
+                scale = Math.min(Math.max(initialScale * (currentDistance / initialDistance), 1), 4);
+                updateTransform();
+            } else if (e.touches.length === 1 && isPanning) {
+                // Pan
+                e.preventDefault();
+                translateX = e.touches[0].clientX - startX;
+                translateY = e.touches[0].clientY - startY;
+
+                // Constrain panning
+                const maxTranslate = (scale - 1) * wrapper.offsetWidth / 2;
+                translateX = Math.min(Math.max(translateX, -maxTranslate), maxTranslate);
+                translateY = Math.min(Math.max(translateY, -maxTranslate), maxTranslate);
+
+                updateTransform();
+            }
+        });
+
+        wrapper.addEventListener('touchend', () => {
+            isPanning = false;
         });
     </script>
 </body>

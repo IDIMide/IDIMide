@@ -115,6 +115,9 @@ body {
     border-radius: 8px;
     overflow: visible;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    touch-action: none;
+    transition: transform 0.1s ease-out;
+    transform-origin: center center;
 }
 
 .screenshot {
