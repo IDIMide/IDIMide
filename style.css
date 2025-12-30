@@ -215,52 +215,31 @@ body {
     color: var(--text-secondary);
 }
 
-.cta-section {
-    text-align: center;
-    padding: 4rem 0 6rem;
-    position: relative;
-    z-index: 2;
-}
-
-.cta-title {
-    font-family: 'Space Mono', monospace;
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--text-primary);
-}
-
-.cta-text {
-    font-size: clamp(1rem, 2vw, 1.25rem);
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-}
-
-.cta-button {
-    display: inline-block;
-    padding: 1rem 2.5rem;
-    background: var(--accent-yellow);
-    color: var(--bg-dark);
-    font-family: 'Space Mono', monospace;
-    font-weight: 700;
-    font-size: 1rem;
-    text-decoration: none;
-    border-radius: 50px;
-    transition: all 0.2s ease;
-    letter-spacing: 0.05em;
-}
-
-.cta-button:hover {
-    background: var(--accent-teal);
-    transform: translateY(-2px);
-}
-
 footer {
     text-align: center;
     padding: 3rem 0;
     border-top: 1px solid var(--border);
     position: relative;
     z-index: 2;
+}
+
+.subscribe-link {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: var(--accent-yellow);
+    color: var(--bg-dark);
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.2s ease;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+}
+
+.subscribe-link:hover {
+    background: var(--accent-teal);
 }
 
 footer p {
