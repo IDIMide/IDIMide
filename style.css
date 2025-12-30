@@ -150,25 +150,33 @@ body {
 .hotspot-number::before {
     content: '';
     position: absolute;
-    width: 40px;
-    height: 40px;
-    border: 2px dashed white;
+    inset: 0;                 /* glow starts at the hotspot edge */
     border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: rotateDashed 8s linear infinite;
-    opacity: 0.6;
+    pointer-events: none;
+    background: transparent;
+
+    animation:
+        hotspotGlow var(--glow-dur, 3.2s) ease-in-out infinite;
+    animation-delay: var(--glow-delay, 0s);
 }
 
-@keyframes rotateDashed {
-    0% {
-        transform: translate(-50%, -50%) rotate(0deg);
+@keyframes hotspotGlow {
+    0%, 100% {
+        opacity: 0.45;
+        box-shadow:
+            0 0 10px 3px rgba(255, 255, 255, 0.16),
+            0 0 18px 7px rgba(255, 255, 255, 0.10);
     }
-    100% {
-        transform: translate(-50%, -50%) rotate(360deg);
+    50% {
+        opacity: 0.95;
+        box-shadow:
+            0 0 14px 5px rgba(255, 255, 255, 0.28),
+            0 0 28px 14px rgba(255, 255, 255, 0.16);
     }
 }
+
+
+
 
 .hotspot:hover .hotspot-number {
     background: var(--accent-teal);
