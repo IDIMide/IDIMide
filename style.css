@@ -59,18 +59,6 @@ body {
     text-transform: uppercase;
     border-radius: 50px;
     margin-bottom: 2rem;
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.05);
-        opacity: 0.95;
-    }
 }
 
 .title {
@@ -155,25 +143,11 @@ body {
     font-weight: 700;
     font-size: 0.875rem;
     border: 2px solid var(--bg-dark);
-    box-shadow: 0 4px 12px rgba(255, 200, 0, 0.4);
     transition: all 0.2s ease;
-    animation: hotspotPulse 2s ease-in-out infinite;
-}
-
-@keyframes hotspotPulse {
-    0%, 100% {
-        box-shadow: 0 4px 12px rgba(255, 200, 0, 0.4);
-    }
-    50% {
-        box-shadow: 0 4px 20px rgba(255, 200, 0, 0.8);
-    }
 }
 
 .hotspot:hover .hotspot-number {
-    transform: scale(1.15);
     background: var(--accent-teal);
-    box-shadow: 0 6px 20px rgba(0, 255, 170, 0.6);
-    animation: none;
 }
 
 .hotspot-tooltip {
