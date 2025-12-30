@@ -107,7 +107,7 @@ body {
 .screenshot-section {
     padding: 0 0 8rem;
     position: relative;
-    z-index: 2;
+    z-index: 1002;
 }
 
 .screenshot-wrapper {
