@@ -5,9 +5,7 @@
 
 	export let hotspots = [];
 
-	let activeHotspotIndex = null;
 	let isMobile = false;
-	let panelScale = 1;
 
 	// Detect actual mobile devices (not just narrow desktop browsers)
 	function checkMobile() {
@@ -16,40 +14,14 @@
 		isMobile = hasTouch && isNarrow;
 	}
 
-	// Update panel scale to counteract zoom - scale font sizes, not the element
-	function updatePanelScale() {
-		if (window.visualViewport) {
-			panelScale = 1 / window.visualViewport.scale;
-		}
-	}
-
 	onMount(() => {
 		checkMobile();
-		updatePanelScale();
-
 		window.addEventListener('resize', checkMobile);
-
-		if (window.visualViewport) {
-			window.visualViewport.addEventListener('resize', updatePanelScale);
-			window.visualViewport.addEventListener('scroll', updatePanelScale);
-		}
 
 		return () => {
 			window.removeEventListener('resize', checkMobile);
-			if (window.visualViewport) {
-				window.visualViewport.removeEventListener('resize', updatePanelScale);
-				window.visualViewport.removeEventListener('scroll', updatePanelScale);
-			}
 		};
 	});
-
-	function handleHotspotClick(index) {
-		activeHotspotIndex = activeHotspotIndex === index ? null : index;
-	}
-
-	$: activeHotspot = activeHotspotIndex !== null ? hotspots[activeHotspotIndex] : null;
-	$: titleFontSize = `${16 * panelScale}px`;
-	$: textFontSize = `${14 * panelScale}px`;
 </script>
 
 <section class="screenshot-section">
@@ -62,7 +34,7 @@
 					class="screenshot"
 				/>
 
-				{#each hotspots as hotspot, i}
+				{#each hotspots as hotspot}
 					<Hotspot
 						number={hotspot.number}
 						top={hotspot.top}
@@ -71,17 +43,24 @@
 						description={hotspot.description}
 						glowDuration={hotspot.glowDuration}
 						glowDelay={hotspot.glowDelay}
-						isActive={activeHotspotIndex === i}
-						onClick={() => handleHotspotClick(i)}
+						isActive={false}
+						onClick={() => {}}
 					/>
 				{/each}
 			</div>
 		</div>
 
-		{#if isMobile && activeHotspot}
-			<div class="hotspot-panel" aria-live="polite">
-				<h4 class="hotspot-panel-title" style="font-size: {titleFontSize}">{activeHotspot.title}</h4>
-				<p class="hotspot-panel-text" style="font-size: {textFontSize}">{activeHotspot.description}</p>
+		{#if isMobile}
+			<div class="hotspot-tiles">
+				{#each hotspots as hotspot}
+					<div class="hotspot-tile">
+						<div class="hotspot-tile-number">{hotspot.number}</div>
+						<div class="hotspot-tile-content">
+							<h4>{hotspot.title}</h4>
+							<p>{hotspot.description}</p>
+						</div>
+					</div>
+				{/each}
 			</div>
 		{/if}
 	</div>
