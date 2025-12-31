@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { base } from '$app/paths';
+	import { base, assets } from '$app/paths';
 	import Hotspot from './Hotspot.svelte';
 
 	export let hotspots = [];
@@ -177,7 +177,7 @@
 			<div bind:this={wrapper} class="screenshot-wrapper" style="transform: {isMobile ? transform : ''}">
 				<img
 					bind:this={img}
-					src="{base}/screenshot.png"
+					src="{assets}/screenshot.png"
 					alt="IDIMide Tracker Interface"
 					class="screenshot"
 					on:load={updateMaxScale}
