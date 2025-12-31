@@ -159,9 +159,34 @@
 		activeHotspotIndex = activeHotspotIndex === index ? null : index;
 	}
 
+	// Calculate absolute position for a hotspot based on wrapper transform
+	function getHotspotPosition(hotspot) {
+		if (!wrapper || !isMobile) {
+			// Desktop: use percentage positioning
+			return { top: hotspot.top, left: hotspot.left };
+		}
+
+		// Mobile: calculate absolute position based on scaled/translated wrapper
+		const baseWidth = wrapper.offsetWidth;
+		const baseHeight = wrapper.offsetHeight;
+
+		// Parse percentage values
+		const topPercent = parseFloat(hotspot.top) / 100;
+		const leftPercent = parseFloat(hotspot.left) / 100;
+
+		// Calculate position in transformed space
+		const x = baseWidth * leftPercent * scale + translateX;
+		const y = baseHeight * topPercent * scale + translateY;
+
+		return { top: `${y}px`, left: `${x}px` };
+	}
+
 	$: transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
-	$: inverseScale = scale > 0 ? 1 / scale : 1;
 	$: activeHotspot = activeHotspotIndex !== null ? hotspots[activeHotspotIndex] : null;
+	// Force recalculation of hotspot positions when scale/translate changes
+	$: if (scale || translateX || translateY) {
+		hotspots = hotspots;
+	}
 </script>
 
 <section class="screenshot-section">
@@ -183,21 +208,39 @@
 					on:load={updateMaxScale}
 				/>
 
+				{#if !isMobile}
+					{#each hotspots as hotspot, i}
+						<Hotspot
+							number={hotspot.number}
+							top={hotspot.top}
+							left={hotspot.left}
+							title={hotspot.title}
+							description={hotspot.description}
+							glowDuration={hotspot.glowDuration}
+							glowDelay={hotspot.glowDelay}
+							isActive={activeHotspotIndex === i}
+							onClick={() => handleHotspotClick(i)}
+						/>
+					{/each}
+				{/if}
+			</div>
+
+			{#if isMobile}
 				{#each hotspots as hotspot, i}
+					{@const pos = getHotspotPosition(hotspot)}
 					<Hotspot
 						number={hotspot.number}
-						top={hotspot.top}
-						left={hotspot.left}
+						top={pos.top}
+						left={pos.left}
 						title={hotspot.title}
 						description={hotspot.description}
 						glowDuration={hotspot.glowDuration}
 						glowDelay={hotspot.glowDelay}
-						scale={isMobile ? inverseScale : 1}
 						isActive={activeHotspotIndex === i}
 						onClick={() => handleHotspotClick(i)}
 					/>
 				{/each}
-			</div>
+			{/if}
 		</div>
 
 		{#if isMobile}
