@@ -119,8 +119,6 @@ body {
 
 .screenshot-wrapper {
     position: relative;
-    transform-origin: 0 0;
-    will-change: transform;
 }
 
 .screenshot {
@@ -405,8 +403,7 @@ footer p {
     }
 
     .screenshot-viewport {
-        overflow: hidden;
-        touch-action: pan-y;
+        overflow: visible;
     }
 
     .hotspot-number {
