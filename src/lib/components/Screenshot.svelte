@@ -57,15 +57,10 @@
 			</div>
 		</div>
 
-		{#if isMobile}
+		{#if isMobile && activeHotspot}
 			<div class="hotspot-panel" aria-live="polite">
-				{#if activeHotspot}
-					<h4 class="hotspot-panel-title">{activeHotspot.title}</h4>
-					<p class="hotspot-panel-text">{activeHotspot.description}</p>
-				{:else}
-					<h4 class="hotspot-panel-title">Tap a marker to explore</h4>
-					<p class="hotspot-panel-text"></p>
-				{/if}
+				<h4 class="hotspot-panel-title">{activeHotspot.title}</h4>
+				<p class="hotspot-panel-text">{activeHotspot.description}</p>
 			</div>
 		{/if}
 	</div>

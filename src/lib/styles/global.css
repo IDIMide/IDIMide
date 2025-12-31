@@ -237,7 +237,7 @@ body {
     left: 0;
     right: 0;
     z-index: 1001;
-    padding: 3vw 4vw;
+    padding: 1rem 1.25rem;
     background: rgba(10, 10, 10, 0.95);
     border-top: 1px solid var(--accent-yellow);
     box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.7);
@@ -246,14 +246,14 @@ body {
 
 .hotspot-panel h4 {
     font-family: 'Space Mono', monospace;
-    font-size: 4vw;
+    font-size: 1rem;
     font-weight: 700;
-    margin-bottom: 1vw;
+    margin-bottom: 0.5rem;
     color: var(--accent-yellow);
 }
 
 .hotspot-panel p {
-    font-size: 3.5vw;
+    font-size: 0.875rem;
     line-height: 1.6;
     color: var(--text-secondary);
 }
