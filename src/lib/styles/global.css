@@ -1,0 +1,473 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-dark: #0a0a0a;
+    --text-primary: #30cfd4;
+    --text-secondary: #a0a0a0;
+    --accent-teal: rgb(0, 255, 170);
+    --accent-yellow: rgb(255, 200, 0);
+    --border: #2a2a2a;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.grain-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    z-index: 1;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.hero {
+    text-align: center;
+    padding: 8rem 0 6rem;
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(180deg, var(--bg-dark) 0%, transparent 100%);
+}
+
+.coming-soon-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: var(--accent-yellow);
+    color: var(--bg-dark);
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 50px;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-teal) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    color: var(--accent-yellow);
+    margin-bottom: 2rem;
+    font-weight: 300;
+}
+
+.features-list {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+    color: white;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.features-list span {
+    white-space: nowrap;
+}
+
+.features-list .separator {
+    color: var(--accent-teal);
+    font-weight: 700;
+}
+
+.screenshot-section {
+    padding: 0 0 8rem;
+    position: relative;
+    z-index: 1002;
+}
+
+.screenshot-viewport {
+    position: relative;
+    border-radius: 8px;
+    overflow: visible;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.screenshot-wrapper {
+    position: relative;
+    transform-origin: 0 0;
+    will-change: transform;
+}
+
+.screenshot {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+}
+
+.hotspot {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+    transform-origin: center;
+}
+
+.hotspot.active {
+    z-index: 1000;
+}
+
+.hotspot-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgb(255, 254, 177);
+    color: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.875rem;
+    border: 2px solid var(--bg-dark);
+    position: relative;
+    transition: all 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.hotspot-number::before {
+    content: '';
+    position: absolute;
+    inset: 0;                 /* glow starts at the hotspot edge */
+    border-radius: 50%;
+    pointer-events: none;
+    background: transparent;
+
+    animation:
+        hotspotGlow var(--glow-dur, 3.2s) ease-in-out infinite;
+    animation-delay: var(--glow-delay, 0s);
+}
+
+@keyframes hotspotGlow {
+    0%, 100% {
+        opacity: 0.45;
+        box-shadow:
+            0 0 10px 3px rgba(255, 255, 255, 0.16),
+            0 0 18px 7px rgba(255, 255, 255, 0.10);
+    }
+    50% {
+        opacity: 0.95;
+        box-shadow:
+            0 0 14px 5px rgba(255, 255, 255, 0.28),
+            0 0 28px 14px rgba(255, 255, 255, 0.16);
+    }
+}
+
+
+
+
+.hotspot.active .hotspot-number {
+    background: var(--accent-teal);
+}
+
+.hotspot.active .hotspot-number::before {
+    display: none;
+}
+
+.hotspot-tooltip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(10, 10, 10, 0.98);
+    border: 1px solid var(--accent-yellow);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    min-width: 280px;
+    max-width: 320px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 1001;
+}
+
+.hotspot.active .hotspot-tooltip {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.hotspot-panel {
+    display: none;
+    position: relative;
+    z-index: 1001;
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    background: rgba(10, 10, 10, 0.95);
+    border: 1px solid var(--accent-yellow);
+    border-radius: 10px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+}
+
+.hotspot-panel h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--accent-yellow);
+}
+
+.hotspot-panel p {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .hotspot:hover .hotspot-number {
+        background: var(--accent-teal);
+    }
+
+    .hotspot:hover .hotspot-number::before {
+        display: none;
+    }
+
+    .hotspot:hover .hotspot-tooltip {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+.hotspot-tooltip h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--accent-yellow);
+}
+
+.hotspot-tooltip p {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.tooltip-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+.tooltip-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.subscribe-section {
+    text-align: center;
+    padding: 4rem 0 6rem;
+    position: relative;
+    z-index: 2;
+}
+
+.subscribe-form {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+footer {
+    text-align: center;
+    padding: 3rem 0;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 2;
+}
+
+.subscribe-input {
+    flex: 1;
+    padding: 0.75rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    color: var(--text-primary);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.subscribe-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.subscribe-input:focus {
+    border-color: var(--accent-yellow);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.subscribe-button {
+    padding: 0.75rem 1.75rem;
+    background: var(--accent-yellow);
+    color: var(--bg-dark);
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.875rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.05em;
+}
+
+.subscribe-button:hover {
+    background: var(--accent-teal);
+}
+
+footer p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+@media (max-width: 480px) {
+    .subscribe-form {
+        flex-direction: column;
+        max-width: 100%;
+    }
+
+    .subscribe-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 6rem 0 4rem;
+    }
+
+    .container {
+        padding: 0 1.5rem;
+    }
+
+    .grain-overlay {
+        display: none;
+    }
+
+    .features-list {
+        font-size: 0.7rem;
+        gap: 0.5rem;
+    }
+
+    .screenshot-section {
+        padding: 0 0 6rem;
+    }
+
+    .screenshot-viewport {
+        overflow: hidden;
+        touch-action: pan-y;
+    }
+
+    .hotspot-number {
+        width: 24px;
+        height: 24px;
+        font-size: 0.65rem;
+        border-width: 1px;
+    }
+
+    .hotspot-number::before {
+        animation: none;
+        box-shadow: none;
+        opacity: 0;
+    }
+
+    .hotspot-tooltip {
+        min-width: 240px;
+        max-width: 280px;
+        padding: 1rem 1.25rem;
+    }
+
+    .hotspot-tooltip h4 {
+        font-size: 0.9rem;
+    }
+
+    .hotspot-tooltip p {
+        font-size: 0.8rem;
+    }
+
+    .hotspot-panel {
+        display: block;
+    }
+
+    .hotspot-tooltip {
+        display: none;
+    }
+
+    .tooltip-backdrop {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 4rem 0 3rem;
+    }
+
+    .coming-soon-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 1.2rem;
+    }
+
+    .features-list {
+        font-size: 0.65rem;
+        gap: 0.4rem;
+    }
+
+    .hotspot-tooltip {
+        min-width: calc(100vw - 3rem);
+        max-width: calc(100vw - 3rem);
+    }
+
+    .hotspot-number {
+        width: 22px;
+        height: 22px;
+        font-size: 0.6rem;
+    }
+}
