@@ -7,6 +7,8 @@
 
 	let activeHotspotIndex = null;
 	let isMobile = false;
+	let isImageVisible = false;
+	let screenshotSection;
 
 	// Check if mobile view
 	function checkMobile() {
@@ -17,8 +19,27 @@
 		checkMobile();
 		window.addEventListener('resize', checkMobile);
 
+		// Set up intersection observer to track image visibility
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach(entry => {
+					isImageVisible = entry.isIntersecting;
+				});
+			},
+			{
+				threshold: 0.1 // Image is visible if at least 10% is in viewport
+			}
+		);
+
+		if (screenshotSection) {
+			observer.observe(screenshotSection);
+		}
+
 		return () => {
 			window.removeEventListener('resize', checkMobile);
+			if (screenshotSection) {
+				observer.unobserve(screenshotSection);
+			}
 		};
 	});
 
@@ -29,7 +50,7 @@
 	$: activeHotspot = activeHotspotIndex !== null ? hotspots[activeHotspotIndex] : null;
 </script>
 
-<section class="screenshot-section">
+<section class="screenshot-section" bind:this={screenshotSection}>
 	<div class="container">
 		<div class="screenshot-viewport">
 			<div class="screenshot-wrapper">
@@ -55,7 +76,7 @@
 			</div>
 		</div>
 
-		{#if isMobile}
+		{#if isMobile && isImageVisible}
 			<div class="hotspot-panel" aria-live="polite">
 				{#if activeHotspot}
 					<h4 class="hotspot-panel-title">{activeHotspot.title}</h4>
