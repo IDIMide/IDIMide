@@ -7,20 +7,13 @@
 
 	let isMobile = false;
 
-	// Detect actual mobile devices (not just narrow desktop browsers)
+	// Detect touch devices (tablets and phones in any orientation)
 	function checkMobile() {
-		const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-		const isNarrow = window.matchMedia('(max-width: 768px)').matches;
-		isMobile = hasTouch && isNarrow;
+		isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 	}
 
 	onMount(() => {
 		checkMobile();
-		window.addEventListener('resize', checkMobile);
-
-		return () => {
-			window.removeEventListener('resize', checkMobile);
-		};
 	});
 </script>
 

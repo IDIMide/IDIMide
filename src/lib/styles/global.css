@@ -435,6 +435,26 @@ footer p {
     }
 }
 
+@media (hover: none) and (pointer: coarse) {
+    .hotspot-tooltip {
+        display: none;
+    }
+
+    .tooltip-backdrop {
+        display: none;
+    }
+
+    .hotspot-tiles {
+        display: grid;
+    }
+
+    .hotspot-number::before {
+        animation: none;
+        box-shadow: none;
+        opacity: 0;
+    }
+}
+
 @media (max-width: 768px) {
     .hero {
         padding: 6rem 0 4rem;
@@ -468,12 +488,6 @@ footer p {
         border-width: 1px;
     }
 
-    .hotspot-number::before {
-        animation: none;
-        box-shadow: none;
-        opacity: 0;
-    }
-
     .hotspot-tooltip {
         min-width: 240px;
         max-width: 280px;
@@ -486,18 +500,6 @@ footer p {
 
     .hotspot-tooltip p {
         font-size: 0.8rem;
-    }
-
-    .hotspot-tiles {
-        display: grid;
-    }
-
-    .hotspot-tooltip {
-        display: none;
-    }
-
-    .tooltip-backdrop {
-        display: none;
     }
 }
 
