@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="IDIMide - An experimental tracker with 12 monophonic tracks, realtime FX, and deep sequencing capabilities. Coming soon.">
     <title>IDIMide - An Experimental Tracker</title>
     <link rel="stylesheet" href="style.css">
@@ -41,6 +41,7 @@
     <main>
         <section class="screenshot-section">
             <div class="container">
+                <div class="screenshot-viewport">
                 <div class="screenshot-wrapper">
                 <img
                     src="screenshot.png"
@@ -131,6 +132,11 @@
                 </div>
 
                 </div>
+                </div>
+                <div class="hotspot-panel" aria-live="polite">
+                    <h4 class="hotspot-panel-title">Tap a marker to explore</h4>
+                    <p class="hotspot-panel-text"></p>
+                </div>
             </div>
             </section>
 
@@ -156,72 +162,91 @@
     <script>
         const hotspots = document.querySelectorAll('.hotspot');
         const backdrop = document.querySelector('.tooltip-backdrop');
+        const viewport = document.querySelector('.screenshot-viewport');
         const wrapper = document.querySelector('.screenshot-wrapper');
-
-        // Hotspot tooltip handling
-        hotspots.forEach(hotspot => {
-            hotspot.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isActive = hotspot.classList.contains('active');
-
-                hotspots.forEach(h => h.classList.remove('active'));
-                backdrop.classList.remove('active');
-
-                if (!isActive) {
-                    hotspot.classList.add('active');
-                    backdrop.classList.add('active');
-                }
-            });
-        });
-
-        backdrop.addEventListener('click', () => {
-            hotspots.forEach(h => h.classList.remove('active'));
-            backdrop.classList.remove('active');
-        });
-
-        // Close tooltip when clicking outside hotspots
-        wrapper.addEventListener('click', (e) => {
-            if (!e.target.closest('.hotspot')) {
-                hotspots.forEach(h => h.classList.remove('active'));
-                backdrop.classList.remove('active');
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                hotspots.forEach(h => h.classList.remove('active'));
-                backdrop.classList.remove('active');
-            }
-        });
-
-        // Pan/Zoom functionality for mobile
+        const screenshot = document.querySelector('.screenshot');
+        const panel = document.querySelector('.hotspot-panel');
+        const panelTitle = panel ? panel.querySelector('.hotspot-panel-title') : null;
+        const panelText = panel ? panel.querySelector('.hotspot-panel-text') : null;
+        const defaultPanelTitle = panelTitle ? panelTitle.textContent : '';
+        const defaultPanelText = panelText ? panelText.textContent : '';
+        let maxScale = 3;
+        let activeHotspot = null;
         let scale = 1;
         let translateX = 0;
         let translateY = 0;
-        let initialDistance = 0;
-        let initialScale = 1;
+        let startPanX = 0;
+        let startPanY = 0;
+        let startDistance = 0;
+        let startScale = 1;
+        let originX = 0;
+        let originY = 0;
         let isPanning = false;
-        let startX = 0;
-        let startY = 0;
-        let lastTap = 0;
-        let lastScale = 1;
+        let isPinching = false;
         let rafId = null;
+        let suppressClickUntil = 0;
 
-        function updateTransform() {
-            if (rafId) return; // Already scheduled
+        function isClickSuppressed() {
+            return Date.now() < suppressClickUntil;
+        }
 
+        function markGesture() {
+            suppressClickUntil = Date.now() + 250;
+        }
+
+        function isMobileView() {
+            return window.matchMedia('(max-width: 768px)').matches;
+        }
+
+        function clampTranslate() {
+            if (!viewport) {
+                return;
+            }
+            const viewportWidth = viewport.clientWidth;
+            const viewportHeight = viewport.clientHeight;
+            const contentWidth = wrapper.offsetWidth * scale;
+            const contentHeight = wrapper.offsetHeight * scale;
+
+            if (contentWidth <= viewportWidth) {
+                translateX = (viewportWidth - contentWidth) / 2;
+            } else {
+                const minTranslateX = viewportWidth - contentWidth;
+                translateX = Math.min(0, Math.max(translateX, minTranslateX));
+            }
+
+            if (contentHeight <= viewportHeight) {
+                translateY = (viewportHeight - contentHeight) / 2;
+            } else {
+                const minTranslateY = viewportHeight - contentHeight;
+                translateY = Math.min(0, Math.max(translateY, minTranslateY));
+            }
+        }
+
+        function applyTransform() {
+            if (!isMobileView()) {
+                wrapper.style.transform = '';
+                return;
+            }
+            wrapper.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
+        }
+
+        function scheduleTransform() {
+            if (rafId) {
+                return;
+            }
             rafId = requestAnimationFrame(() => {
-                wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-
-                // Only update hotspot scale if scale changed (not on every pan)
-                if (scale !== lastScale) {
-                    const inverseScale = 1 / scale;
+                clampTranslate();
+                applyTransform();
+                if (isMobileView()) {
+                    const inverseScale = scale ? 1 / scale : 1;
                     hotspots.forEach(hotspot => {
                         hotspot.style.transform = `scale(${inverseScale})`;
                     });
-                    lastScale = scale;
+                } else {
+                    hotspots.forEach(hotspot => {
+                        hotspot.style.transform = '';
+                    });
                 }
-
                 rafId = null;
             });
         }
@@ -232,58 +257,185 @@
             return Math.sqrt(dx * dx + dy * dy);
         }
 
-        wrapper.addEventListener('touchstart', (e) => {
-            // Double tap to reset
-            const currentTime = new Date().getTime();
-            const tapLength = currentTime - lastTap;
-            if (tapLength < 300 && tapLength > 0 && e.touches.length === 1) {
+        function getMidpoint(touch1, touch2) {
+            return {
+                x: (touch1.clientX + touch2.clientX) / 2,
+                y: (touch1.clientY + touch2.clientY) / 2
+            };
+        }
+
+        function updateMaxScale() {
+            if (!screenshot || !wrapper) {
+                return;
+            }
+            const renderedWidth = wrapper.offsetWidth || screenshot.clientWidth;
+            if (!renderedWidth) {
+                return;
+            }
+            const naturalWidth = screenshot.naturalWidth || renderedWidth;
+            const maxFromImage = naturalWidth / renderedWidth;
+            maxScale = Math.max(1, Math.min(3, maxFromImage));
+            if (scale > maxScale) {
+                scale = maxScale;
+            }
+            scheduleTransform();
+        }
+
+        function updatePanel(hotspot) {
+            if (!panelTitle || !panelText) {
+                return;
+            }
+
+            if (!hotspot) {
+                panelTitle.textContent = defaultPanelTitle;
+                panelText.textContent = defaultPanelText;
+                return;
+            }
+
+            const title = hotspot.querySelector('.hotspot-tooltip h4');
+            const text = hotspot.querySelector('.hotspot-tooltip p');
+            panelTitle.textContent = title ? title.textContent : defaultPanelTitle;
+            panelText.textContent = text ? text.textContent : defaultPanelText;
+        }
+
+        function setActiveHotspot(hotspot) {
+            hotspots.forEach(h => h.classList.remove('active'));
+            backdrop.classList.remove('active');
+            activeHotspot = hotspot || null;
+
+            if (hotspot) {
+                hotspot.classList.add('active');
+                backdrop.classList.add('active');
+                updatePanel(hotspot);
+            } else {
+                updatePanel(null);
+            }
+        }
+
+        hotspots.forEach(hotspot => {
+            hotspot.addEventListener('click', (e) => {
+                if (isClickSuppressed()) {
+                    return;
+                }
+                e.stopPropagation();
+                const isActive = hotspot.classList.contains('active');
+                setActiveHotspot(isActive ? null : hotspot);
+            });
+        });
+
+        backdrop.addEventListener('click', () => {
+            if (isClickSuppressed()) {
+                return;
+            }
+            setActiveHotspot(null);
+        });
+
+        wrapper.addEventListener('click', (e) => {
+            if (isClickSuppressed()) {
+                return;
+            }
+            if (!e.target.closest('.hotspot')) {
+                setActiveHotspot(null);
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                setActiveHotspot(null);
+            }
+        });
+
+        if (viewport) {
+            viewport.addEventListener('touchstart', (e) => {
+                if (!isMobileView()) {
+                    return;
+                }
+
+                if (e.touches.length === 2) {
+                    const [touch1, touch2] = e.touches;
+                    isPinching = true;
+                    isPanning = false;
+                    startDistance = getDistance(touch1, touch2);
+                    startScale = scale;
+                    const midpoint = getMidpoint(touch1, touch2);
+                    originX = (midpoint.x - translateX) / scale;
+                    originY = (midpoint.y - translateY) / scale;
+                } else if (e.touches.length === 1 && scale > 1) {
+                    const touch = e.touches[0];
+                    isPanning = true;
+                    startPanX = touch.clientX - translateX;
+                    startPanY = touch.clientY - translateY;
+                }
+            }, { passive: false });
+
+            viewport.addEventListener('touchmove', (e) => {
+                if (!isMobileView()) {
+                    return;
+                }
+
+                if (e.touches.length === 2 && isPinching) {
+                    e.preventDefault();
+                    markGesture();
+                    const [touch1, touch2] = e.touches;
+                    const distance = getDistance(touch1, touch2);
+                    scale = Math.min(Math.max(startScale * (distance / startDistance), 1), maxScale);
+                    const midpoint = getMidpoint(touch1, touch2);
+                    translateX = midpoint.x - originX * scale;
+                    translateY = midpoint.y - originY * scale;
+                    scheduleTransform();
+                } else if (e.touches.length === 1 && isPanning && scale > 1) {
+                    e.preventDefault();
+                    markGesture();
+                    const touch = e.touches[0];
+                    translateX = touch.clientX - startPanX;
+                    translateY = touch.clientY - startPanY;
+                    scheduleTransform();
+                }
+            }, { passive: false });
+
+            viewport.addEventListener('touchend', (e) => {
+                if (!isMobileView()) {
+                    return;
+                }
+
+                if (e.touches.length === 0) {
+                    isPanning = false;
+                    isPinching = false;
+                } else if (e.touches.length === 1) {
+                    const touch = e.touches[0];
+                    isPinching = false;
+                    if (scale > 1) {
+                        isPanning = true;
+                        startPanX = touch.clientX - translateX;
+                        startPanY = touch.clientY - translateY;
+                    }
+                }
+            });
+
+            viewport.addEventListener('touchcancel', () => {
+                isPanning = false;
+                isPinching = false;
+            });
+        }
+
+        if (screenshot) {
+            if (screenshot.complete) {
+                updateMaxScale();
+            } else {
+                screenshot.addEventListener('load', updateMaxScale, { once: true });
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            if (!isMobileView()) {
                 scale = 1;
                 translateX = 0;
                 translateY = 0;
-                updateTransform();
-                e.preventDefault();
-                return;
             }
-            lastTap = currentTime;
-
-            if (e.touches.length === 2) {
-                // Pinch zoom
-                initialDistance = getDistance(e.touches[0], e.touches[1]);
-                initialScale = scale;
-            } else if (e.touches.length === 1) {
-                // Pan
-                isPanning = true;
-                startX = e.touches[0].clientX - translateX;
-                startY = e.touches[0].clientY - translateY;
-            }
+            updateMaxScale();
+            scheduleTransform();
         });
 
-        wrapper.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 2) {
-                // Pinch zoom
-                e.preventDefault();
-                const currentDistance = getDistance(e.touches[0], e.touches[1]);
-                scale = Math.min(Math.max(initialScale * (currentDistance / initialDistance), 1), 4);
-                updateTransform();
-            } else if (e.touches.length === 1 && isPanning && scale > 1) {
-                // Pan only when zoomed in
-                e.preventDefault();
-                translateX = e.touches[0].clientX - startX;
-                translateY = e.touches[0].clientY - startY;
-
-                // Constrain panning to keep image mostly visible
-                const maxTranslateX = (wrapper.offsetWidth * (scale - 1)) / 2;
-                const maxTranslateY = (wrapper.offsetHeight * (scale - 1)) / 2;
-                translateX = Math.min(Math.max(translateX, -maxTranslateX), maxTranslateX);
-                translateY = Math.min(Math.max(translateY, -maxTranslateY), maxTranslateY);
-
-                updateTransform();
-            }
-        });
-
-        wrapper.addEventListener('touchend', () => {
-            isPanning = false;
-        });
     </script>
 </body>
 </html>
