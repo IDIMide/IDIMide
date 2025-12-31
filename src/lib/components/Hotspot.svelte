@@ -8,12 +8,13 @@
 	export let glowDelay;
 	export let isActive = false;
 	export let onClick;
+	export let scale = 1;
 </script>
 
 <button
 	class="hotspot"
 	class:active={isActive}
-	style="top: {top}; left: {left}; --glow-dur: {glowDuration}; --glow-delay: {glowDelay};"
+	style="top: {top}; left: {left}; --glow-dur: {glowDuration}; --glow-delay: {glowDelay}; transform: scale({scale});"
 	on:click={onClick}
 	aria-label={title}
 >

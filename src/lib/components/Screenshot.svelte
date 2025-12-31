@@ -184,19 +184,18 @@
 				/>
 
 				{#each hotspots as hotspot, i}
-					<div style="transform: scale({isMobile ? inverseScale : 1})">
-						<Hotspot
-							number={hotspot.number}
-							top={hotspot.top}
-							left={hotspot.left}
-							title={hotspot.title}
-							description={hotspot.description}
-							glowDuration={hotspot.glowDuration}
-							glowDelay={hotspot.glowDelay}
-							isActive={activeHotspotIndex === i}
-							onClick={() => handleHotspotClick(i)}
-						/>
-					</div>
+					<Hotspot
+						number={hotspot.number}
+						top={hotspot.top}
+						left={hotspot.left}
+						title={hotspot.title}
+						description={hotspot.description}
+						glowDuration={hotspot.glowDuration}
+						glowDelay={hotspot.glowDelay}
+						scale={isMobile ? inverseScale : 1}
+						isActive={activeHotspotIndex === i}
+						onClick={() => handleHotspotClick(i)}
+					/>
 				{/each}
 			</div>
 		</div>
