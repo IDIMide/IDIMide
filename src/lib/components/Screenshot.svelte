@@ -7,6 +7,7 @@
 
 	let activeHotspotIndex = null;
 	let isMobile = false;
+	let panelScale = 1;
 
 	// Detect actual mobile devices (not just narrow desktop browsers)
 	function checkMobile() {
@@ -15,12 +16,30 @@
 		isMobile = hasTouch && isNarrow;
 	}
 
+	// Update panel scale to counteract zoom
+	function updatePanelScale() {
+		if (window.visualViewport) {
+			panelScale = 1 / window.visualViewport.scale;
+		}
+	}
+
 	onMount(() => {
 		checkMobile();
+		updatePanelScale();
+
 		window.addEventListener('resize', checkMobile);
+
+		if (window.visualViewport) {
+			window.visualViewport.addEventListener('resize', updatePanelScale);
+			window.visualViewport.addEventListener('scroll', updatePanelScale);
+		}
 
 		return () => {
 			window.removeEventListener('resize', checkMobile);
+			if (window.visualViewport) {
+				window.visualViewport.removeEventListener('resize', updatePanelScale);
+				window.visualViewport.removeEventListener('scroll', updatePanelScale);
+			}
 		};
 	});
 
@@ -29,6 +48,7 @@
 	}
 
 	$: activeHotspot = activeHotspotIndex !== null ? hotspots[activeHotspotIndex] : null;
+	$: panelStyle = `transform: scale(${panelScale}); transform-origin: bottom center;`;
 </script>
 
 <section class="screenshot-section">
@@ -58,7 +78,7 @@
 		</div>
 
 		{#if isMobile && activeHotspot}
-			<div class="hotspot-panel" aria-live="polite">
+			<div class="hotspot-panel" style={panelStyle} aria-live="polite">
 				<h4 class="hotspot-panel-title">{activeHotspot.title}</h4>
 				<p class="hotspot-panel-text">{activeHotspot.description}</p>
 			</div>
